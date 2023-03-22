@@ -53,7 +53,7 @@ def apartments_region_search(area: String, max_n=100):
     listings_find = bs.find_all('div', class_='content-wrapper')
     listings = {}
     for each in listings_find:
-        listings[each.find('a').get('aria-label').split(',')[0]] = each
+        listings[each.find('a').get('aria-label').split(',')[0]] = each.text
 
     with open('./test_scrape.json', 'w') as f:
         json.dump(listings, f)
