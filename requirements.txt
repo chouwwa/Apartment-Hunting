@@ -184,6 +184,6 @@ watchfiles==0.18.1
 wcwidth==0.2.6
 webencodings==0.5.1
 websockets==10.4
-wordcloud==1.8.1
+wordcloud -e @ https://download.lfd.uci.edu/pythonlibs/archived/wordcloud-1.8.1-cp311-cp311-win_amd64.whl
 wrapt==1.15.0
 yarl==1.8.2

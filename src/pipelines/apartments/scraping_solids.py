@@ -98,3 +98,30 @@ print(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div[1]/a'
     )
 )
+
+listings_name = page.html.xpath(
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
+)
+listings_price = page.html.xpath(
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[1]'
+)
+listings_amenities = page.html.xpath(
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p/@text'
+)
+listings_address = page.html.xpath("")
+listings_link = page.html.xpath(
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
+)
+listings_beds = page.html.xpath(
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
+)
+listings = []
+for i, v in enumerate(listings_name):
+    listings.append(
+        {
+            "name": v.split(",")[0],
+            "price": listings_price[i],
+            "beds": listings_beds[i],
+            "amenities": listings_amenities[i],
+        }
+    )
