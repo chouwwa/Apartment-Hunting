@@ -106,7 +106,7 @@ listings_price = page.html.xpath(
     '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[1]'
 )
 listings_amenities = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p/@text'
+    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
 )
 listings_address = page.html.xpath("")
 listings_link = page.html.xpath(
