@@ -60,13 +60,15 @@ def apartments_region_search(area: String, max_n=100):
 
     # Get list of items with css
     # listings = page.html.xpath("/html/body/div[1]/div[3]/div/div[2]/div/div/div/div[1]")
-    listings = page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div'
-    )
+    # listings = page.html.xpath(
+    #     '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div'
+    # )
 
-    print(listings)
+    # print(listings)
 
-    save_html(page, "test_scrape.pkl")
+    # save_html(page, "test_scrape.pkl")
+
+    return page
 
 
 def get_url(url, headers) -> HTMLResponse:
@@ -93,35 +95,45 @@ def load_html(fn):
 session = HTMLSession()
 page = session.response_hook(load_html("test_scrape.pkl"))
 
-print(
-    page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div[1]/a'
-    )
-)
+# print(
+#     page.html.xpath(
+#         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div[1]/a'
+#     )
+# )
 
-listings_name = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
-)
-listings_price = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[1]'
-)
-listings_amenities = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
-)
-listings_address = page.html.xpath("")
-listings_link = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
-)
-listings_beds = page.html.xpath(
-    '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
-)
-listings = []
-for i, v in enumerate(listings_name):
-    listings.append(
-        {
-            "name": v.split(",")[0],
-            "price": listings_price[i],
-            "beds": listings_beds[i],
-            "amenities": listings_amenities[i],
-        }
+
+def get_listings(page):
+    listings_name = page.html.xpath(
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
     )
+    listings_price = page.html.xpath(
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[1]'
+    )
+    listings_amenities = page.html.xpath(
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
+    )
+    # listings_address = page.html.xpath("")
+    listings_link = page.html.xpath(
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
+    )
+    listings_beds = page.html.xpath(
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
+    )
+    listings = []
+    for i, v in enumerate(listings_name):
+        listings.append(
+            {
+                "name": v.split(",")[0],
+                "price": listings_price[i],
+                "beds": listings_beds[i],
+                "amenities": listings_amenities[i]
+                if i < len(listings_amenities)
+                else None,
+            }
+        )
+
+    return listings
+
+
+with open("./listings.pkl", "w+") as f:
+    pickle.dump(get_listings(page), f)
