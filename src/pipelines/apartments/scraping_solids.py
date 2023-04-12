@@ -129,6 +129,7 @@ def get_listings(page):
                 "amenities": listings_amenities[i]
                 if i < len(listings_amenities)
                 else None,
+                "link": listings_link[i],
             }
         )
 
