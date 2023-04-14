@@ -205,6 +205,7 @@ wordcloud = "*"
 wrapt = "==1.15.0"
 yarl = "==1.8.2"
 zipp = "==3.15.0"
+minio = "*"
 
 [dev-packages]
 

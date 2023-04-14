@@ -90,11 +90,6 @@ def load_html(fn):
         return pickle.load(f)
 
 
-# apartments_region_search("PleaSaNton, cA")
-
-session = HTMLSession()
-page = session.response_hook(load_html("test_scrape.pkl"))
-
 # print(
 #     page.html.xpath(
 #         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div[1]/a'
@@ -107,11 +102,14 @@ def get_listings(page):
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
     )
     listings_price = page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[1]'
+        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a/p[1]'
     )
-    listings_amenities = page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
-    )
+    listings_amenities = [
+        x.innerText
+        for x in page.html.xpath(
+            '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
+        )
+    ]
     # listings_address = page.html.xpath("")
     listings_link = page.html.xpath(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
@@ -136,5 +134,14 @@ def get_listings(page):
     return listings
 
 
-with open("./listings.pkl", "w+") as f:
-    pickle.dump(get_listings(page), f)
+# apartments_region_search("PleaSaNton, cA")
+
+session = HTMLSession()
+page = session.response_hook(load_html("test_scrape.pkl"))
+
+listings = get_listings(page)
+
+for i in listings[0]:
+    print(type(listings[0][i]))
+# with open("./listings.json", "w+") as f:
+#     json.dump(get_listings(page), f)
