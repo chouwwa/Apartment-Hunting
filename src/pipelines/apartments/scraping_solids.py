@@ -101,11 +101,14 @@ def get_listings(page):
     listings_name = page.html.xpath(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
     )
-    listings_price = page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a/p[1]'
-    )
+    listings_price = [
+        x.text
+        for x in page.html.xpath(
+            '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a/p[1]'
+        )
+    ]
     listings_amenities = [
-        x.innerText
+        [y.text for y in x.find("span")]
         for x in page.html.xpath(
             '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
         )
@@ -114,9 +117,12 @@ def get_listings(page):
     listings_link = page.html.xpath(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
     )
-    listings_beds = page.html.xpath(
-        '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
-    )
+    listings_beds = [
+        x.text
+        for x in page.html.xpath(
+            '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
+        )
+    ]
     listings = []
     for i, v in enumerate(listings_name):
         listings.append(
@@ -141,7 +147,5 @@ page = session.response_hook(load_html("test_scrape.pkl"))
 
 listings = get_listings(page)
 
-for i in listings[0]:
-    print(type(listings[0][i]))
-# with open("./listings.json", "w+") as f:
-#     json.dump(get_listings(page), f)
+with open("./listings.json", "w+") as f:
+    json.dump(listings, f)
