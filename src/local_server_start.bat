@@ -1,0 +1,1 @@
+minio server C:\minio --console-address :9090
