@@ -142,10 +142,10 @@ def get_listings(page):
 
 # apartments_region_search("PleaSaNton, cA")
 
-session = HTMLSession()
-page = session.response_hook(load_html("test_scrape.pkl"))
+# session = HTMLSession()
+# page = session.response_hook(load_html("test_scrape.pkl"))
 
-listings = get_listings(page)
+# listings = get_listings(page)
 
-with open("./listings.json", "w+") as f:
-    json.dump(listings, f)
+# with open("./listings.json", "w+") as f:
+#     json.dump(listings, f)
