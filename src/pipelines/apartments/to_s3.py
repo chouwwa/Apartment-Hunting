@@ -14,7 +14,7 @@ if client.bucket_exists("data"):
 else:
     client.make_bucket("data")
 
-pa.Table.from_dict()
+pa.Table.(table, where)
 
 
 client.fput_object(

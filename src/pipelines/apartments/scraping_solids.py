@@ -4,9 +4,10 @@ import re
 import datetime
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
+
+import pyarrow as pa
 import json
 import pickle
-
 import gzip
 import shutil
 
@@ -41,6 +42,15 @@ from dagster_aws.s3.solids import S3Coordinate
 
 
 def apartments_region_search(area: String, max_n=100):
+    """Searches Apartments.com in the area provided with a max of max_n results
+
+    Args:
+        area (String): City, State (only US)
+        max_n (int, optional): Maximum results scraped. Defaults to 100.
+
+    Returns:
+        HTMLResponse: HTML response from requests-html with max_n results
+    """
     # only USA
     # city, state
     usa = area.split(",")
@@ -95,34 +105,59 @@ def load_html(fn):
 #         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div[1]/a'
 #     )
 # )
-
-
-def get_listings(page):
+def get_listing_names(page):
     listings_name = page.html.xpath(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@aria-label'
     )
+    return listings_name
+
+
+def get_listing_prices(page):
     listings_price = [
         x.text
         for x in page.html.xpath(
             '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a/p[1]'
         )
     ]
+    return listings_price
+
+
+def get_listing_amenities(page):
     listings_amenities = [
         [y.text for y in x.find("span")]
         for x in page.html.xpath(
             '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a/p'
         )
     ]
-    # listings_address = page.html.xpath("")
+    return listings_amenities
+
+
+def get_listing_links(page):
     listings_link = page.html.xpath(
         '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/a[1]/@href'
     )
+    return listings_link
+
+
+def get_listing_beds(page):
     listings_beds = [
         x.text
         for x in page.html.xpath(
             '//*[@id="placardContainer"]/ul/li/article/section/div/div[2]/div/div[1]/a[1]/p[2]'
         )
     ]
+    return listings_beds
+
+
+def get_listings_dict(page):
+    listings_name = get_listing_names(page)
+    listings_price = get_listing_prices(page)
+    listings_beds = get_listing_beds(page)
+    listings_amenities = get_listing_amenities(page)
+    listings_links = get_listing_links(page)
+
+    # listings_address = page.html.xpath("")
+
     listings = []
     for i, v in enumerate(listings_name):
         listings.append(
@@ -132,20 +167,37 @@ def get_listings(page):
                 "beds": listings_beds[i],
                 "amenities": listings_amenities[i]
                 if i < len(listings_amenities)
-                else None,
-                "link": listings_link[i],
+                else "",
+                "link": listings_links[i],
             }
         )
 
     return listings
 
 
+def get_listings_pyarrow(page):
+    listings = [
+        pa.array(get_listing_names(page)),
+        pa.array(get_listing_prices(page)),
+        pa.array(get_listing_beds(page)),
+        pa.array(get_listing_amenities(page)),
+        pa.array(get_listing_links(page)),
+    ]
+
+    print(listings[-2].len)
+    # return pa.Table.from_arrays(
+    #     listings, names=("names", "prices", "beds", "amenities", "links")
+    # )
+
+
 # apartments_region_search("PleaSaNton, cA")
 
-# session = HTMLSession()
-# page = session.response_hook(load_html("test_scrape.pkl"))
+session = HTMLSession()
+page = session.response_hook(load_html("test_scrape.pkl"))
 
 # listings = get_listings(page)
 
 # with open("./listings.json", "w+") as f:
 #     json.dump(listings, f)
+
+print(get_listings_pyarrow(page))
