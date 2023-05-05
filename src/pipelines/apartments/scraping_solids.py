@@ -5,6 +5,8 @@ import datetime
 from bs4 import BeautifulSoup
 from datetime import datetime as dt
 
+import pyspark
+import pyspark.sql.functions
 import pyarrow as pa
 import json
 import pickle
@@ -34,7 +36,7 @@ from dagster import (
 # from .types_realestate import PropertyDataFrame, SearchCoordinate, JsonType
 
 
-from dagster_aws.s3.solids import S3Coordinate
+from dagster_aws.s3 import S3Coordinate
 
 # from realestate.common.solids_spark_delta import upload_to_s3
 # from realestate.common.solids_filehandle import json_to_gzip
@@ -191,6 +193,7 @@ def get_listings_pyarrow(page):
     # print(len(listings[-2]))
     return pa.table(listings, names=("names", "prices", "beds", "amenities", "links"))
 
+def get_listings_spark(page):
 
 # apartments_region_search("PleaSaNton, cA")
 
