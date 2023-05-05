@@ -167,7 +167,7 @@ def get_listings_dict(page):
                 "beds": listings_beds[i],
                 "amenities": listings_amenities[i]
                 if i < len(listings_amenities)
-                else "",
+                else [],
                 "link": listings_links[i],
             }
         )
@@ -177,17 +177,19 @@ def get_listings_dict(page):
 
 def get_listings_pyarrow(page):
     listings = [
-        pa.array(get_listing_names(page)),
-        pa.array(get_listing_prices(page)),
-        pa.array(get_listing_beds(page)),
-        pa.array(get_listing_amenities(page)),
-        pa.array(get_listing_links(page)),
+        get_listing_names(page),
+        get_listing_prices(page),
+        get_listing_beds(page),
+        get_listing_amenities(page),
+        get_listing_links(page),
     ]
 
-    print(listings[-2].len)
-    # return pa.Table.from_arrays(
-    #     listings, names=("names", "prices", "beds", "amenities", "links")
-    # )
+    same_len = len(listings[0])
+    for each in listings:
+        if len(each) < same_len:
+            each += [None] * (same_len - len(each))
+    # print(len(listings[-2]))
+    return pa.table(listings, names=("names", "prices", "beds", "amenities", "links"))
 
 
 # apartments_region_search("PleaSaNton, cA")
@@ -199,5 +201,5 @@ page = session.response_hook(load_html("test_scrape.pkl"))
 
 # with open("./listings.json", "w+") as f:
 #     json.dump(listings, f)
-
-print(get_listings_pyarrow(page))
+#
+# print(get_listings_pyarrow(page))
