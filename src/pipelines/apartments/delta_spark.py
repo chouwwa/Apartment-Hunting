@@ -1,3 +1,5 @@
+import to_s3
+
 from delta import *
 import pyspark
 
@@ -12,4 +14,4 @@ builder = (
 
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
-# df_spark =
+df_spark = spark.read.parquet()
