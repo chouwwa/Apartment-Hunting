@@ -1,4 +1,4 @@
-import to_s3
+# import to_s3
 import scraping_solids
 
 import delta

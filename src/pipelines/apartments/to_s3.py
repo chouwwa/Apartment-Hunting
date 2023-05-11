@@ -39,14 +39,14 @@ def read_parquet_s3(path, filename, filesystem):
     )
 
 
-client = local_fs()
+# client = local_fs()
 
-client.create_dir("data")
-write_parquet_s3(
-    scraping_solids.get_listings_pyarrow(scraping_solids.page),
-    "data/",
-    "test_scrape",
-    client,
-)
+# client.create_dir("data")
+# write_parquet_s3(
+#     scraping_solids.get_listings_pyarrow(scraping_solids.page),
+#     "data/",
+#     "test_scrape",
+#     client,
+# )
 
-print(read_parquet_s3("data/", "test_scrape", client))
+# print(read_parquet_s3("data/", "test_scrape", client))
