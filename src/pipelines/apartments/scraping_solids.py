@@ -177,7 +177,7 @@ def get_listings_dict(page):
     return listings
 
 
-def get_listings_pyarrow(page):
+def get_listings_pyarrow(page) -> pa.Table:
     listings = [
         get_listing_names(page),
         get_listing_prices(page),
@@ -193,7 +193,23 @@ def get_listings_pyarrow(page):
     # print(len(listings[-2]))
     return pa.table(listings, names=("names", "prices", "beds", "amenities", "links"))
 
-def get_listings_spark(page):
+
+def get_listings(page):
+    listings = [
+        get_listing_names(page),
+        get_listing_prices(page),
+        get_listing_beds(page),
+        get_listing_amenities(page),
+        get_listing_links(page),
+    ]
+
+    same_len = len(listings[0])
+    for each in listings:
+        if len(each) < same_len:
+            each += [None] * (same_len - len(each))
+
+    return listings
+
 
 # apartments_region_search("PleaSaNton, cA")
 
