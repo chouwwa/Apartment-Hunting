@@ -3,3 +3,5 @@ practical-data-engineering-cec582939032a108569f5d8c6e4f42ac943f0ab9/*
 data-engineering/*
 requirements_old.txt
 .gitignore
+Pipfile.lock
+Pipfile
