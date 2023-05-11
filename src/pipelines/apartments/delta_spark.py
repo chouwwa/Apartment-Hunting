@@ -44,9 +44,7 @@ spark = delta.configure_spark_with_delta_pip(builder).getOrCreate()
 #     ["names", "prices", "beds", "amenities", "links"],
 # )
 
-df = spark.createDataFrame(
-    [([1, 1, 1]), ([2, 2, 2]), ([3, 3, 3])], ["one", "two", "three"]
-)
+df = spark.createDataFrame([[1, 1, 1], [2, 2, 2], [3, 3, 3]], ["one", "two", "three"])
 
 print(df)
 print(df.head())
