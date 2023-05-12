@@ -63,8 +63,8 @@ graphene==3.2.1
 graphql-core==3.2.3
 graphql-relay==3.2.0
 greenlet==2.0.2
-grpcio==1.51.3
-grpcio-health-checking==1.51.3
+# grpcio==1.51.3
+# grpcio-health-checking==1.51.3
 h11==0.14.0
 httptools==0.5.0
 humanfriendly==10.0
@@ -203,7 +203,7 @@ wcwidth==0.2.6
 webencodings==0.5.1
 websockets==10.4
 wimpy==0.6
-wordcloud @ file:///C:/Users/waylchan/Downloads/wordcloud-1.8.1-cp311-cp311-win_amd64.whl
+# wordcloud @ file:///C:/Users/waylchan/Downloads/wordcloud-1.8.1-cp311-cp311-win_amd64.whl
 wrapt==1.15.0
 yarl==1.8.2
 zipp==3.15.0
