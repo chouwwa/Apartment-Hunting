@@ -2,12 +2,14 @@
 import scraping_solids
 
 import delta
-import pyspark.sql
+import pyspark
+import pyspark.sql as pssql
+from pyspark.sql import types as pstypes
 
 
 def local_fs():
     return (
-        pyspark.sql.SparkSession.builder.appName("apartment_hunting")
+        pssql.SparkSession.builder.appName("apartment_hunting")
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
         .config(
             "spark.sql.catalog.spark_catalog",
@@ -15,13 +17,14 @@ def local_fs():
         )
         .config("spark.hadoop.fs.s3a.access.key", "minioadmin")
         .config("spark.hadoop.fs.s3a.secret.key", "minioadmin")
+        .config("spark.hadoop.fs.s3a.endpoint", "127.0.0.1:9000")
         # .remote("sc://127.0.0.1:9000")
     )
 
 
 def remote_fs(acc_key, sec_key):
     return (
-        pyspark.sql.SparkSession.builder.appName("apartment_hunting")
+        pssql.SparkSession.builder.appName("apartment_hunting")
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
         .config(
             "spark.sql.catalog.spark_catalog",
@@ -39,13 +42,16 @@ spark = delta.configure_spark_with_delta_pip(builder).getOrCreate()
 # rdd = spark.sparkContext.parallelize(scraping_solids.get_listings(scraping_solids.page))
 
 # df = rdd.toDF(["names", "prices", "beds", "amenities", "links"])
-# df = spark.createDataFrame(
-#     scraping_solids.get_listings(scraping_solids.page),
-#     ["names", "prices", "beds", "amenities", "links"],
-# )
+listings = scraping_solids.get_listings(scraping_solids.page)
+df = spark.createDataFrame(
+    [listings],
+    "names string, prices string, beds string, amenities string, links string",
+)
 
-df = spark.createDataFrame([[1, 1, 1], [2, 2, 2], [3, 3, 3]], ["one", "two", "three"])
+df.show()
+df.printSchema()
+# df = spark.createDataFrame([[1, 1, 1], [2, 2, 2], [3, 3, 3]], ["one", "two", "three"])
 
-print(df)
-print(df.head())
-# df.write.format("delta").save("s3a://127.0.0.1:9000/data/test_scrape")
+# print(df)
+# print(df.head())
+df.write.format("delta").save("s3a://data/test_scrape")
