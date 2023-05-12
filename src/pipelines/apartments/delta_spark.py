@@ -38,7 +38,9 @@ def remote_fs(acc_key, sec_key):
 
 builder = local_fs()
 
-spark = delta.configure_spark_with_delta_pip(builder).getOrCreate()
+spark = delta.configure_spark_with_delta_pip(
+    builder, ["org.apache.hadoop:hadoop-aws:3.3.2"]
+).getOrCreate()
 # rdd = spark.sparkContext.parallelize(scraping_solids.get_listings(scraping_solids.page))
 
 # df = rdd.toDF(["names", "prices", "beds", "amenities", "links"])
