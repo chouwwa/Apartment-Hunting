@@ -158,8 +158,6 @@ def get_listings_dict(page):
     listings_amenities = get_listing_amenities(page)
     listings_links = get_listing_links(page)
 
-    # listings_address = page.html.xpath("")
-
     listings = []
     for i, v in enumerate(listings_name):
         listings.append(
@@ -203,12 +201,18 @@ def get_listings(page):
         get_listing_links(page),
     ]
 
-    same_len = len(listings[0])
-    for each in listings:
-        if len(each) < same_len:
-            each += [None] * (same_len - len(each))
-
-    return listings
+    num_listings = len(listings[0])
+    with_amenities = len(listings[3])
+    return [
+        (
+            listings[0][i].split(",")[0],
+            listings[1][i],
+            listings[2][i],
+            listings[3][i] if i < with_amenities else [],
+            listings[4][i],
+        )
+        for i in range(num_listings)
+    ]
 
 
 # apartments_region_search("PleaSaNton, cA")
@@ -216,7 +220,11 @@ def get_listings(page):
 session = HTMLSession()
 page = session.response_hook(load_html("test_scrape.pkl"))
 
-# listings = get_listings(page)
+listings = get_listings(page)
+
+# for each in listings:
+#     print(each)
+#     print(type(each))
 
 # with open("./listings.json", "w+") as f:
 #     json.dump(listings, f)

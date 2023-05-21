@@ -4,7 +4,13 @@ import scraping_solids
 import delta
 import pyspark
 import pyspark.sql as pssql
-from pyspark.sql import types as pstypes
+from pyspark.sql.types import (
+    StructType,
+    StructField,
+    StringType,
+    LongType,
+    ArrayType,
+)
 
 
 def local_fs():
@@ -15,9 +21,9 @@ def local_fs():
             "spark.sql.catalog.spark_catalog",
             "org.apache.spark.sql.delta.catalog.DeltaCatalog",
         )
-        .config("spark.hadoop.fs.s3a.access.key", "minioadmin")
-        .config("spark.hadoop.fs.s3a.secret.key", "minioadmin")
-        .config("spark.hadoop.fs.s3a.endpoint", "127.0.0.1:9000")
+        .config("spark.hadoop.fs.s3.access.key", "minioadmin")
+        .config("spark.hadoop.fs.s3.secret.key", "minioadmin")
+        .config("spark.hadoop.fs.s3.endpoint", "127.0.0.1:9000")
         # .remote("sc://127.0.0.1:9000")
     )
 
@@ -44,11 +50,19 @@ spark = delta.configure_spark_with_delta_pip(
 # rdd = spark.sparkContext.parallelize(scraping_solids.get_listings(scraping_solids.page))
 
 # df = rdd.toDF(["names", "prices", "beds", "amenities", "links"])
-listings = scraping_solids.get_listings(scraping_solids.page)
-df = spark.createDataFrame(
-    [listings],
-    "names string, prices string, beds string, amenities string, links string",
+listings = scraping_solids.listings
+
+schema = StructType(
+    [
+        StructField("name", StringType(), True),
+        StructField("price", StringType(), True),
+        StructField("beds", StringType(), True),
+        StructField("amenities", ArrayType(StringType(), True), True),
+        StructField("link", StringType(), True),
+    ]
 )
+
+df = spark.createDataFrame(listings, schema=schema)
 
 df.show()
 df.printSchema()
@@ -56,4 +70,4 @@ df.printSchema()
 
 # print(df)
 # print(df.head())
-df.write.format("delta").save("s3a://data/test_scrape")
+df.write.format("delta").save("s3://data/test_scrape")
