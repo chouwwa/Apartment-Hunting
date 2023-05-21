@@ -21,14 +21,14 @@ def local_fs():
             "spark.sql.catalog.spark_catalog",
             "org.apache.spark.sql.delta.catalog.DeltaCatalog",
         )
-        .config("spark.hadoop.fs.s3.access.key", "minioadmin")
-        .config("spark.hadoop.fs.s3.secret.key", "minioadmin")
-        .config("spark.hadoop.fs.s3.endpoint", "127.0.0.1:9000")
+        .config("spark.hadoop.fs.s3a.access.key", "minioadmin")
+        .config("spark.hadoop.fs.s3a.secret.key", "minioadmin")
+        .config("spark.hadoop.fs.s3a.endpoint", "http://127.0.0.1:9000")
         # .remote("sc://127.0.0.1:9000")
     )
 
 
-def remote_fs(acc_key, sec_key):
+def remote_fs(acc_key, sec_key, remote):
     return (
         pssql.SparkSession.builder.appName("apartment_hunting")
         .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
@@ -38,14 +38,18 @@ def remote_fs(acc_key, sec_key):
         )
         .config("spark.hadoop.fs.s3a.access.key", acc_key)
         .config("spark.hadoop.fs.s3a.secret.key", sec_key)
-        # .remote("sc://" + remote)
+        .config("spark.hadoop.fs.s3a.endpoint", remote)
     )
 
 
 builder = local_fs()
 
 spark = delta.configure_spark_with_delta_pip(
-    builder, ["org.apache.hadoop:hadoop-aws:3.3.2"]
+    builder,
+    [
+        "org.apache.hadoop:hadoop-aws:3.3.2",
+        "com.amazonaws:aws-java-sdk-bundle:1.12.472",
+    ],
 ).getOrCreate()
 # rdd = spark.sparkContext.parallelize(scraping_solids.get_listings(scraping_solids.page))
 
@@ -70,4 +74,4 @@ df.printSchema()
 
 # print(df)
 # print(df.head())
-df.write.format("delta").save("s3://data/test_scrape")
+df.write.format("delta").save("s3a://data/test_scrape")
