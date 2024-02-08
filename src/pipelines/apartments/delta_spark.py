@@ -21,8 +21,8 @@ def local_fs():
             "spark.sql.catalog.spark_catalog",
             "org.apache.spark.sql.delta.catalog.DeltaCatalog",
         )
-        .config("spark.hadoop.fs.s3a.access.key", "minioadmin")
-        .config("spark.hadoop.fs.s3a.secret.key", "minioadmin")
+        .config("spark.hadoop.fs.s3a.access.key", "admin")
+        .config("spark.hadoop.fs.s3a.secret.key", "password")
         .config("spark.hadoop.fs.s3a.endpoint", "http://127.0.0.1:9000")
         # .remote("sc://127.0.0.1:9000")
     )
@@ -39,6 +39,7 @@ def remote_fs(acc_key, sec_key, remote):
         .config("spark.hadoop.fs.s3a.access.key", acc_key)
         .config("spark.hadoop.fs.s3a.secret.key", sec_key)
         .config("spark.hadoop.fs.s3a.endpoint", remote)
+        .config("fs.s3.buckets.create.enabled", "true")
     )
 
 
